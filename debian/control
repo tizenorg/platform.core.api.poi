@@ -1,0 +1,22 @@
+
+Source: capi-location-poi
+Section: libs
+Priority: extra
+Maintainer: Seungkeun Lee <sngn.lee@samsung.com>, Kangho Hur<kagho.hur@samsung.com>
+Build-Depends: debhelper (>= 5), libslp-location-dev , capi-base-common-dev , capi-location-manager-dev, dlog-dev
+
+Package: capi-location-poi
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: A Location POI library in Tizen Native API
+
+Package: capi-location-poi-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, capi-location-poi (= ${Source-Version}), capi-base-common-dev , capi-location-manager-dev
+Description: A Location POI library in Tizen Native API (DEV)
+
+Package: capi-location-poi-dbg
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, capi-location-poi (= ${Source-Version})
+Description: A Location POI library in Tizen Native API (DBG)
+
