@@ -16,6 +16,7 @@
 
 
 #include <location/location.h>
+#include <location/location-map-service.h>
 #include <poi.h>
 #include <poi_private.h>
 
@@ -142,11 +143,11 @@ int poi_service_create( poi_service_h *poi)
 		POI_PRINT_ERROR_CODE_RETURN(POI_ERROR_OUT_OF_MEMORY);
 	}
 
-	handle->object = location_new(LOCATION_METHOD_HYBRID);
+	handle->object = location_map_new(NULL);
 	if(handle->object  == NULL)
 	{
 		free(handle);
-		LOGE("[%s] POI_ERROR_SERVICE_NOT_AVAILABLE(0x%08x) : fail to location_new", __FUNCTION__, POI_ERROR_SERVICE_NOT_AVAILABLE);
+		LOGE("[%s] POI_ERROR_SERVICE_NOT_AVAILABLE(0x%08x) : fail to location_map_new", __FUNCTION__, POI_ERROR_SERVICE_NOT_AVAILABLE);
 		return POI_ERROR_SERVICE_NOT_AVAILABLE;
 	}	
 
@@ -167,7 +168,7 @@ int poi_service_destroy(poi_service_h poi)
 		handle->preference = NULL;
 	}
 
-	int ret = location_free(handle->object);
+	int ret = location_map_free(handle->object);
 	if(ret!= POI_ERROR_NONE)
 	{
 		return _convert_error_code(ret,__FUNCTION__);
@@ -240,7 +241,7 @@ int poi_service_search(poi_service_h poi, location_coords_s position, int distan
 	}
 
 
-	ret = location_search_poi (handle->object , (LocationPOIFilter*)filter , &pos, (LocationPOIPreference *)handle->preference, __LocationPOICB, calldata, &reqid);
+	ret = location_map_search_poi (handle->object , (LocationPOIFilter*)filter , &pos, (LocationPOIPreference *)handle->preference, __LocationPOICB, calldata, &reqid);
 	if( ret != 0 ){
 		free(calldata);
 		return _convert_error_code(ret, __func__);
@@ -266,13 +267,13 @@ int poi_service_search_by_area (poi_service_h poi, location_bounds_h boundary , 
 	location_bounds_get_type(boundary, &bound_type);
 	
 	if( bound_type == LOCATION_BOUNDS_RECT ){
-		if( !location_is_supported_map_provider_capability(handle->object , MAP_SERVICE_POI_SEARCH_BY_RECT_BOUNDARY) )
+		if( !location_map_is_supported_provider_capability(handle->object , MAP_SERVICE_POI_SEARCH_BY_RECT_BOUNDARY) )
 			return POI_ERROR_SERVICE_NOT_AVAILABLE;
 	}else if(bound_type == LOCATION_BOUNDS_CIRCLE){
-		if( !location_is_supported_map_provider_capability(handle->object , MAP_SERVICE_POI_SEARCH_BY_CIRCLE_BOUNDARY) )
+		if( !location_map_is_supported_provider_capability(handle->object , MAP_SERVICE_POI_SEARCH_BY_CIRCLE_BOUNDARY) )
 			return POI_ERROR_SERVICE_NOT_AVAILABLE;	
 	}else if(bound_type == LOCATION_BOUNDS_CIRCLE){
-		if( !location_is_supported_map_provider_capability(handle->object , MAP_SERVICE_POI_SEARCH_BY_POLYGON_BOUNDARY) )
+		if( !location_map_is_supported_provider_capability(handle->object , MAP_SERVICE_POI_SEARCH_BY_POLYGON_BOUNDARY) )
 			return POI_ERROR_SERVICE_NOT_AVAILABLE;		
 	}
 	
@@ -285,7 +286,7 @@ int poi_service_search_by_area (poi_service_h poi, location_bounds_h boundary , 
 
 	poi_preference_set(handle->preference, "Distance", NULL);
 
-	ret = location_search_poi_by_area (handle->object , (LocationPOIFilter*)filter , (LocationBoundary *)boundary, (LocationPOIPreference *)handle->preference, __LocationPOICB, calldata, &reqid);
+	ret = location_map_search_poi_by_area (handle->object , (LocationPOIFilter*)filter , (LocationBoundary *)boundary, (LocationPOIPreference *)handle->preference, __LocationPOICB, calldata, &reqid);
 	if( ret != 0 ){
 		free(calldata);
 		return _convert_error_code(ret, __func__);
@@ -323,7 +324,7 @@ int poi_service_search_by_address(poi_service_h poi, const char* address, int di
 		poi_preference_set(handle->preference, "Distance", NULL);
 	}	
 
-	ret = location_search_poi_by_freeformed_address (handle->object , (LocationPOIFilter*)filter , address, (LocationPOIPreference *)handle->preference, __LocationPOICB, calldata, &reqid);
+	ret = location_map_search_poi_by_freeformed_address (handle->object , (LocationPOIFilter*)filter , address, (LocationPOIPreference *)handle->preference, __LocationPOICB, calldata, &reqid);
 
 	if( ret != 0 ){
 		free(calldata);
@@ -341,7 +342,7 @@ int poi_service_cancel(poi_service_h service, int request_id)
 	POI_NULL_ARG_CHECK(service);
 
 	poi_service_s *handle = (poi_service_s*)service;
-	return _convert_error_code(location_cancel_poi_request(handle->object, request_id), __func__);
+	return _convert_error_code(location_map_cancel_poi_request(handle->object, request_id), __func__);
 }
 
 int poi_filter_create(poi_filter_h *filter)
@@ -404,7 +405,7 @@ int poi_filter_foreach_available_keys( poi_service_h poi, poi_filter_available_k
 	POI_NULL_ARG_CHECK(callback);
 
 	GList *keys=NULL;
-	location_get_map_provider_capability_key((LocationObject*)poi, MAP_SERVICE_POI_FILTER, &keys);
+	location_map_get_provider_capability_key((LocationMapObject*)poi, MAP_SERVICE_POI_FILTER, &keys);
 	if( keys == NULL )
 		return POI_ERROR_RESULT_NOT_FOUND;
 
@@ -467,7 +468,7 @@ int poi_preference_foreach_available_keys( poi_service_h poi,  poi_preference_av
 	POI_NULL_ARG_CHECK(callback);
 
 	GList *keys=NULL;
-	location_get_map_provider_capability_key((LocationObject*)poi, MAP_SERVICE_POI_PREF_PROPERTY, &keys);
+	location_map_get_provider_capability_key((LocationMapObject*)poi, MAP_SERVICE_POI_PREF_PROPERTY, &keys);
 	if( keys == NULL )
 		return POI_ERROR_RESULT_NOT_FOUND;
 
@@ -539,7 +540,7 @@ int poi_preference_foreach_sortable_field( poi_service_h poi, poi_preference_sor
 	POI_NULL_ARG_CHECK(callback);
 
 	GList *keys=NULL;
-	location_get_map_provider_capability_key((LocationObject*)poi, MAP_SERVICE_POI_PREF_SORT_BY, &keys);
+	location_map_get_provider_capability_key((LocationMapObject*)poi, MAP_SERVICE_POI_PREF_SORT_BY, &keys);
 	if( keys == NULL )
 		return POI_ERROR_RESULT_NOT_FOUND;
 

@@ -1,7 +1,27 @@
+capi-location-poi (0.1.0-5) unstable; urgency=low
+
+  * Seperate map service from location service
+  * Tag: capi-location-poi_0.1.0-5
+
+ -- Minjune Kim <sena06.kim@samsung.com>  Fri, 27 Jul 2012 20:08:43 +0900
+
+capi-location-poi (0.1.0-4) unstable; urgency=low
+
+  * Support developer mode
+  * Tag: capi-location-poi_0.1.0-4
+
+ -- Minjune Kim <sena06.kim@samsung.com>  Thu, 19 Jul 2012 19:51:04 +0900
+
+capi-location-poi (0.1.0-3) unstable; urgency=low
+
+  * Fix the failed cases on TC
+  * Tag: capi-location-poi_0.1.0-3
+
+ -- Minjune Kim <sena06.kim@samsung.com>  Thu, 12 Apr 2012 20:20:41 +0900
+
 capi-location-poi (0.1.0-2) unstable; urgency=low
 
   * update POI
-  * Git: slp-source.sec.samsung.net:slp/api/poi
   * Tag: capi-location-poi_0.1.0-2
 
  -- Seungkeun Lee <sngn.lee@samsung.com>  Wed, 21 Mar 2012 11:36:19 +0900
@@ -9,7 +29,6 @@ capi-location-poi (0.1.0-2) unstable; urgency=low
 capi-location-poi (0.1.0-1) unstable; urgency=low
 
   * initial release
-  * Git: slp-source.sec.samsung.net:slp/api/poi
   * Tag: capi-location-poi_0.1.0-1
 
  -- Seungkeun Lee <sngn.lee@samsung.com>  Tue, 14 Feb 2012 17:55:34 +0900

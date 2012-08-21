@@ -14,8 +14,10 @@
 * limitations under the License.
 */
 #include <stdio.h>
+#include <unistd.h>
 #include <glib.h>
 #include <poi.h>
+#include <location_bounds.h>
 
 static GMainLoop *g_mainloop = NULL;
 
@@ -50,6 +52,13 @@ int poi_test(){
 	poi_preference_h pref;
 	poi_service_create(&poi_manager);
 
+	location_bounds_h bound;
+
+	location_coords_s pos = {37.336723, -121.889555};
+	location_bounds_create_circle(pos, 400, &bound);
+
+	char * addr = "N SAN PEDRO ST CA SANTA CLARA SAN JOSE 95110";
+
 	poi_filter_create(&filter);
 	//poi_filter_set(filter, "KEYWORD", "pizza");
 	poi_filter_set(filter, "CATEGORY", "restaurant");
@@ -57,18 +66,112 @@ int poi_test(){
 	poi_preference_set_max_result(pref, 5);
 	poi_preference_set_sort(pref, "Distance", POI_SORTORDER_ASC);
 	poi_service_set_preference(poi_manager, pref);
-	location_coords_s pos = {37.771008, -122.41175};
 
 	 int ret;
 	//printf("request search!!!\n");
 	ret = poi_service_search(poi_manager,pos , 100, filter, _service_search_cb , NULL, NULL);
-	printf("ret = %d\n", ret);
+	printf("ret = category, poi_service_search : %d\n", ret);
+
+	sleep(3);
+
+	poi_filter_create(&filter);
+	poi_filter_set(filter, "KEYWORD", "pizza");
+	poi_preference_create(&pref);
+	poi_preference_set_max_result(pref, 5);
+	poi_preference_set_sort(pref, "Distance", POI_SORTORDER_DESC);
+	poi_service_set_preference(poi_manager, pref);
+
+	ret = poi_service_search(poi_manager,pos , 100, filter, _service_search_cb , NULL, NULL);
+	printf("ret = keyword, poi_service_search : %d\n", ret);
 
 
-	//ret = poi_service_search_by_address(poi_manager,"Seoul, Korea", 100, filter, _service_search_cb , NULL, NULL);
-	//printf("ret = %d\n", ret);
+	sleep(3);
+
+	poi_filter_create(&filter);
+	poi_filter_set(filter, "POIName", "pizza");
+	poi_preference_create(&pref);
+	poi_preference_set_max_result(pref, 5);
+	poi_preference_set_sort(pref, "Distance", POI_SORTORDER_DESC);
+	poi_service_set_preference(poi_manager, pref);
+
+	ret = poi_service_search(poi_manager,pos , 100, filter, _service_search_cb , NULL, NULL);
+	printf("ret = POIName, poi_service_search : %d\n", ret);
+
+	sleep(3);
+
+	poi_filter_create(&filter);
+	poi_filter_set(filter, "CATEGORY", "restaurant");
+	poi_preference_create(&pref);
+	poi_preference_set_max_result(pref, 5);
+	poi_preference_set_sort(pref, "Distance", POI_SORTORDER_DESC);
+	poi_service_set_preference(poi_manager, pref);
+
+	ret = poi_service_search_by_area(poi_manager, bound, filter, _service_search_cb , NULL, NULL);
+	printf("ret = category, poi_service_search_by_area : %d\n", ret);
 
 
+	sleep(3);
+
+	poi_filter_create(&filter);
+	poi_filter_set(filter, "KEYWORD", "pizza");
+	poi_preference_create(&pref);
+	poi_preference_set_max_result(pref, 5);
+	poi_preference_set_sort(pref, "Distance", POI_SORTORDER_DESC);
+	poi_service_set_preference(poi_manager, pref);
+
+	ret = poi_service_search_by_area(poi_manager, bound, filter, _service_search_cb , NULL, NULL);
+	printf("ret = keyword, poi_service_search_by_area : %d\n", ret);
+
+	sleep(3);
+
+	poi_filter_create(&filter);
+	poi_preference_create(&pref);
+	poi_filter_set(filter, "POIName", "pizza");
+	poi_preference_set_max_result(pref, 5);
+	poi_preference_set_sort(pref, "Distance", POI_SORTORDER_DESC);
+	poi_service_set_preference(poi_manager, pref);
+
+	ret = poi_service_search_by_area(poi_manager, bound, filter, _service_search_cb , NULL, NULL);
+	printf("ret = poi name, poi_service_search_by_area : %d\n", ret);
+
+	sleep(3);
+
+	poi_filter_create(&filter);
+	poi_filter_set(filter, "CATEGORY", "restaurant");
+	poi_preference_create(&pref);
+	poi_preference_set_max_result(pref, 5);
+	poi_preference_set_sort(pref, "Distance", POI_SORTORDER_DESC);
+	poi_service_set_preference(poi_manager, pref);
+
+	ret = poi_service_search_by_address(poi_manager, addr, 100, filter, _service_search_cb , NULL, NULL);
+	printf("ret = category, poi_service_search_by_address : %d\n", ret);
+
+
+	sleep(10);
+
+	poi_filter_create(&filter);
+	poi_filter_set(filter, "KEYWORD", "cafe");
+	poi_preference_create(&pref);
+	poi_preference_set_max_result(pref, 5);
+	poi_preference_set_sort(pref, "Distance", POI_SORTORDER_DESC);
+	poi_service_set_preference(poi_manager, pref);
+
+	ret = poi_service_search_by_address(poi_manager, addr, 400, filter, _service_search_cb , NULL, NULL);
+	printf("ret = keyword, poi_service_search_by_address : %d\n", ret);
+
+	sleep(10);
+
+	poi_filter_create(&filter);
+	poi_filter_set(filter, "POIName", "cafe");
+	poi_preference_create(&pref);
+	poi_preference_set_max_result(pref, 5);
+	poi_preference_set_sort(pref, "Distance", POI_SORTORDER_DESC);
+	poi_service_set_preference(poi_manager, pref);
+
+	ret = poi_service_search_by_address(poi_manager, addr, 400, filter, _service_search_cb , NULL, NULL);
+	printf("ret = POIName, poi_service_search_by_address : %d\n", ret);
+
+	sleep(10);
 	return 0;
 }
 
@@ -78,10 +181,12 @@ int main(){
 	// If application is executed by AUL, this is not needed.
 	g_setenv("PKG_NAME", "com.samsung.location-api-test", 1);
 
+#if !GLIB_CHECK_VERSION (2, 31, 0)
 	if( !g_thread_supported() )
 	{
 		g_thread_init(NULL);
 	}
+#endif
 
 	GThread *g_main;
 	g_main = g_thread_create(GmainThread, NULL, TRUE, &gerr);

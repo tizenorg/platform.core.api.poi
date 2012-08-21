@@ -26,7 +26,7 @@ extern "C" {
 
 
 typedef struct _poi_service_s{
-	LocationObject* object;
+	LocationMapObject* object;
 	poi_preference_h preference;
 
 } poi_service_s;

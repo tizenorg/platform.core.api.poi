@@ -1,7 +1,7 @@
 Name:       capi-location-poi
 Summary:    A Location POI library in Tizen Native API
 Version:    0.1.0
-Release:    2
+Release:    1
 Group:      TO_BE/FILLED_IN
 License:    TO BE FILLED IN
 Source0:    %{name}-%{version}.tar.gz
