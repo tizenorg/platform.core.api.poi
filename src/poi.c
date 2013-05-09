@@ -1,19 +1,18 @@
 /*
-* Copyright (c) 2011 Samsung Electronics Co., Ltd All Rights Reserved
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-
+ * Copyright (c) 2011-2013 Samsung Electronics Co., Ltd All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include <location/location.h>
 #include <location/location-map-service.h>
@@ -97,9 +96,7 @@ static void __LocationPOICB(LocationError error, guint req_id, GList * landmark_
 
 }
 
-
-
-int poi_service_create( poi_service_h *poi)
+EXPORT_API int poi_service_create( poi_service_h *poi)
 {
 	if( poi == NULL)
 		POI_PRINT_ERROR_CODE_RETURN(POI_ERROR_INVALID_PARAMETER);
@@ -134,7 +131,7 @@ int poi_service_create( poi_service_h *poi)
 }
 
 
-int poi_service_destroy(poi_service_h poi)
+EXPORT_API int poi_service_destroy(poi_service_h poi)
 {
 	if( poi == NULL)
 		POI_PRINT_ERROR_CODE_RETURN(POI_ERROR_INVALID_PARAMETER);
@@ -156,7 +153,7 @@ int poi_service_destroy(poi_service_h poi)
 
 }
 
-int poi_service_set_preference(poi_service_h poi , poi_preference_h preference)
+EXPORT_API int poi_service_set_preference(poi_service_h poi , poi_preference_h preference)
 {
 	POI_NULL_ARG_CHECK(poi);
 	POI_NULL_ARG_CHECK(preference);
@@ -170,7 +167,7 @@ int poi_service_set_preference(poi_service_h poi , poi_preference_h preference)
 	return POI_ERROR_NONE;
 }
 
-int poi_service_get_preference(poi_service_h poi , poi_preference_h *preference)
+EXPORT_API int poi_service_get_preference(poi_service_h poi , poi_preference_h *preference)
 {
 	POI_NULL_ARG_CHECK(poi);
 	POI_NULL_ARG_CHECK(preference);
@@ -183,7 +180,7 @@ int poi_service_get_preference(poi_service_h poi , poi_preference_h *preference)
 	return POI_ERROR_NONE;
 }
 
-int poi_service_search(poi_service_h poi, location_coords_s position, int distance , poi_filter_h filter, poi_service_search_cb callback, void * user_data, int * request_id)
+EXPORT_API int poi_service_search(poi_service_h poi, location_coords_s position, int distance , poi_filter_h filter, poi_service_search_cb callback, void * user_data, int * request_id)
 {
 	POI_NULL_ARG_CHECK(poi);
 	POI_NULL_ARG_CHECK(callback);
@@ -232,7 +229,7 @@ int poi_service_search(poi_service_h poi, location_coords_s position, int distan
 }
 
 
-int poi_service_search_by_area (poi_service_h poi, location_bounds_h boundary , poi_filter_h filter, poi_service_search_cb callback, void * user_data, int * request_id)
+EXPORT_API int poi_service_search_by_area (poi_service_h poi, location_bounds_h boundary , poi_filter_h filter, poi_service_search_cb callback, void * user_data, int * request_id)
 {
 	POI_NULL_ARG_CHECK(poi);
 	POI_NULL_ARG_CHECK(callback);
@@ -276,7 +273,7 @@ int poi_service_search_by_area (poi_service_h poi, location_bounds_h boundary , 
 
 }
 
-int poi_service_search_by_address(poi_service_h poi, const char* address, int distance, poi_filter_h filter, poi_service_search_cb callback, void * user_data, int * request_id)
+EXPORT_API int poi_service_search_by_address(poi_service_h poi, const char* address, int distance, poi_filter_h filter, poi_service_search_cb callback, void * user_data, int * request_id)
 {
 	POI_NULL_ARG_CHECK(poi);
 	POI_NULL_ARG_CHECK(callback);
@@ -315,7 +312,7 @@ int poi_service_search_by_address(poi_service_h poi, const char* address, int di
 
 }
 
-int poi_service_cancel(poi_service_h service, int request_id)
+EXPORT_API int poi_service_cancel(poi_service_h service, int request_id)
 {
 	POI_NULL_ARG_CHECK(service);
 
@@ -323,7 +320,7 @@ int poi_service_cancel(poi_service_h service, int request_id)
 	return _convert_error_code(location_map_cancel_poi_request(handle->object, request_id));
 }
 
-int poi_filter_create(poi_filter_h *filter)
+EXPORT_API int poi_filter_create(poi_filter_h *filter)
 {
 	POI_NULL_ARG_CHECK(filter);
 
@@ -332,13 +329,15 @@ int poi_filter_create(poi_filter_h *filter)
 	*filter = (void*)native_filter;
 	return POI_ERROR_NONE;
 }
-int poi_filter_destroy(poi_filter_h filter)
+
+EXPORT_API int poi_filter_destroy(poi_filter_h filter)
 {
 	POI_NULL_ARG_CHECK(filter);
 	location_poi_filter_free((LocationPOIFilter*)filter);
 	return POI_ERROR_NONE;
 }
-int poi_filter_set(poi_filter_h filter, const char* key, const char* value)
+
+EXPORT_API int poi_filter_set(poi_filter_h filter, const char* key, const char* value)
 {
 	POI_NULL_ARG_CHECK(filter);
 	POI_NULL_ARG_CHECK(key);
@@ -347,7 +346,8 @@ int poi_filter_set(poi_filter_h filter, const char* key, const char* value)
 		return POI_ERROR_INVALID_KEY;
 	return POI_ERROR_NONE;
 }
-int poi_filter_get(poi_filter_h filter, const char* key, char** value)
+
+EXPORT_API int poi_filter_get(poi_filter_h filter, const char* key, char** value)
 {
 	POI_NULL_ARG_CHECK(filter);
 	POI_NULL_ARG_CHECK(key);
@@ -360,7 +360,7 @@ int poi_filter_get(poi_filter_h filter, const char* key, char** value)
 	return POI_ERROR_NONE;
 }
 
-int poi_filter_foreach_properties(poi_filter_h filter, poi_filter_properties_cb callback , void * user_data)
+EXPORT_API int poi_filter_foreach_properties(poi_filter_h filter, poi_filter_properties_cb callback , void * user_data)
 {
 	POI_NULL_ARG_CHECK(filter);
 	POI_NULL_ARG_CHECK(callback);
@@ -377,7 +377,7 @@ int poi_filter_foreach_properties(poi_filter_h filter, poi_filter_properties_cb 
 	return POI_ERROR_NONE;
 }
 
-int poi_filter_foreach_available_keys( poi_service_h poi, poi_filter_available_key_cb callback , void * user_data)
+EXPORT_API int poi_filter_foreach_available_keys( poi_service_h poi, poi_filter_available_key_cb callback , void * user_data)
 {
 	POI_NULL_ARG_CHECK(poi);
 	POI_NULL_ARG_CHECK(callback);
@@ -399,14 +399,14 @@ int poi_filter_foreach_available_keys( poi_service_h poi, poi_filter_available_k
 	return POI_ERROR_NONE;
 }
 
-int poi_filter_foreach_available_values( poi_service_h poi, const char *key, poi_filter_available_value_cb callback , void * user_data)
+EXPORT_API int poi_filter_foreach_available_values( poi_service_h poi, const char *key, poi_filter_available_value_cb callback , void * user_data)
 {
 	//TODO.
 	// Available category
 	return POI_ERROR_RESULT_NOT_FOUND;
 }
 
-int poi_preference_create(poi_preference_h *preference )
+EXPORT_API int poi_preference_create(poi_preference_h *preference )
 {
 	POI_NULL_ARG_CHECK(preference);
 	LocationPOIPreference *pref;
@@ -418,14 +418,14 @@ int poi_preference_create(poi_preference_h *preference )
 	return POI_ERROR_NONE;
 }
 
-int poi_preference_destroy(poi_preference_h preference )
+EXPORT_API int poi_preference_destroy(poi_preference_h preference )
 {
 	POI_NULL_ARG_CHECK(preference);
 	location_poi_pref_free((LocationPOIPreference*)preference);
 	return POI_ERROR_NONE;
 }
 
-int poi_preference_foreach_properties( poi_preference_h preference, poi_preference_properties_cb callback , void * user_data)
+EXPORT_API int poi_preference_foreach_properties( poi_preference_h preference, poi_preference_properties_cb callback , void * user_data)
 {
 	POI_NULL_ARG_CHECK(preference);
 	POI_NULL_ARG_CHECK(callback);
@@ -442,7 +442,7 @@ int poi_preference_foreach_properties( poi_preference_h preference, poi_preferen
 	return POI_ERROR_NONE;
 }
 
-int poi_preference_foreach_available_keys( poi_service_h poi,  poi_preference_available_key_cb callback , void * user_data)
+EXPORT_API int poi_preference_foreach_available_keys( poi_service_h poi,  poi_preference_available_key_cb callback , void * user_data)
 {
 	POI_NULL_ARG_CHECK(poi);
 	POI_NULL_ARG_CHECK(callback);
@@ -464,7 +464,7 @@ int poi_preference_foreach_available_keys( poi_service_h poi,  poi_preference_av
 	return POI_ERROR_NONE;
 }
 
-int poi_preference_foreach_available_values( poi_service_h poi, const char *key,  poi_preference_available_value_cb callback , void * user_data)
+EXPORT_API int poi_preference_foreach_available_values( poi_service_h poi, const char *key,  poi_preference_available_value_cb callback , void * user_data)
 {
 	//TODO. impl..
 	// Availiable LandmarkType
@@ -472,7 +472,7 @@ int poi_preference_foreach_available_values( poi_service_h poi, const char *key,
 	return POI_ERROR_RESULT_NOT_FOUND;
 }
 
-int poi_preference_get(poi_preference_h preference, const char *key, char **value)
+EXPORT_API int poi_preference_get(poi_preference_h preference, const char *key, char **value)
 {
 	POI_NULL_ARG_CHECK(preference);
 	POI_NULL_ARG_CHECK(key);
@@ -484,7 +484,7 @@ int poi_preference_get(poi_preference_h preference, const char *key, char **valu
 	return POI_ERROR_NONE;
 }
 
-int poi_preference_set(poi_preference_h preference, const char *key, const char *value)
+EXPORT_API int poi_preference_set(poi_preference_h preference, const char *key, const char *value)
 {
 	POI_NULL_ARG_CHECK(preference);
 	POI_NULL_ARG_CHECK(key);
@@ -495,7 +495,7 @@ int poi_preference_set(poi_preference_h preference, const char *key, const char 
 	return POI_ERROR_NONE;
 }
 
-int poi_preference_set_max_result(poi_preference_h preference, int max_result)
+EXPORT_API int poi_preference_set_max_result(poi_preference_h preference, int max_result)
 {
 	POI_NULL_ARG_CHECK(preference);
 	int ret = location_poi_pref_set_max_result((LocationPOIPreference*)preference, max_result);
@@ -504,7 +504,7 @@ int poi_preference_set_max_result(poi_preference_h preference, int max_result)
 	return POI_ERROR_NONE;
 }
 
-int poi_preference_get_max_result(poi_preference_h preference, int* max_result)
+EXPORT_API int poi_preference_get_max_result(poi_preference_h preference, int* max_result)
 {
 	POI_NULL_ARG_CHECK(preference);
 	POI_NULL_ARG_CHECK(max_result);
@@ -516,7 +516,7 @@ int poi_preference_get_max_result(poi_preference_h preference, int* max_result)
 }
 
 
-int poi_preference_foreach_sortable_field( poi_service_h poi, poi_preference_sortable_field_cb callback , void * user_data)
+EXPORT_API int poi_preference_foreach_sortable_field( poi_service_h poi, poi_preference_sortable_field_cb callback , void * user_data)
 {
 	POI_NULL_ARG_CHECK(poi);
 	POI_NULL_ARG_CHECK(callback);
@@ -538,7 +538,7 @@ int poi_preference_foreach_sortable_field( poi_service_h poi, poi_preference_sor
 	return POI_ERROR_NONE;
 }
 
-int poi_preference_set_sort(poi_preference_h preference , const char* field , poi_sort_order_e order)
+EXPORT_API int poi_preference_set_sort(poi_preference_h preference , const char* field , poi_sort_order_e order)
 {
 	POI_NULL_ARG_CHECK(preference);
 	POI_NULL_ARG_CHECK(field);
@@ -552,7 +552,7 @@ int poi_preference_set_sort(poi_preference_h preference , const char* field , po
 	return POI_ERROR_NONE;
 }
 
-int poi_preference_get_sort(poi_preference_h preference , char** field,  poi_sort_order_e *order)
+EXPORT_API int poi_preference_get_sort(poi_preference_h preference , char** field,  poi_sort_order_e *order)
 {
 	POI_NULL_ARG_CHECK(preference);
 	POI_NULL_ARG_CHECK(field);
@@ -567,7 +567,7 @@ int poi_preference_get_sort(poi_preference_h preference , char** field,  poi_sor
 	return POI_ERROR_NONE;
 }
 
-int poi_create(poi_h *poi)
+EXPORT_API int poi_create(poi_h *poi)
 {
 	POI_NULL_ARG_CHECK(poi);
 	LocationLandmark* landmark = location_landmark_new();
@@ -578,14 +578,14 @@ int poi_create(poi_h *poi)
 	return POI_ERROR_NONE;
 }
 
-int poi_destroy(poi_h poi)
+EXPORT_API int poi_destroy(poi_h poi)
 {
 	POI_NULL_ARG_CHECK(poi);
 	location_landmark_free((LocationLandmark*)poi);
 	return POI_ERROR_NONE;
 }
 
-int poi_clone(poi_h* cloned, poi_h origin)
+EXPORT_API int poi_clone(poi_h* cloned, poi_h origin)
 {
 	POI_NULL_ARG_CHECK(cloned);
 	POI_NULL_ARG_CHECK(origin);
@@ -597,7 +597,7 @@ int poi_clone(poi_h* cloned, poi_h origin)
 	return POI_ERROR_NONE;
 }
 
-int poi_get_id(poi_h poi, int *id)
+EXPORT_API int poi_get_id(poi_h poi, int *id)
 {
 	POI_NULL_ARG_CHECK(poi);
 	POI_NULL_ARG_CHECK(id);
@@ -605,7 +605,7 @@ int poi_get_id(poi_h poi, int *id)
 	return POI_ERROR_NONE;
 }
 
-int poi_get_name(poi_h poi, char **name)
+EXPORT_API int poi_get_name(poi_h poi, char **name)
 {
 	POI_NULL_ARG_CHECK(poi);
 	POI_NULL_ARG_CHECK(name);
@@ -617,7 +617,7 @@ int poi_get_name(poi_h poi, char **name)
 	return POI_ERROR_NONE;
 }
 
-int poi_get_position(poi_h poi, location_coords_s *position)
+EXPORT_API int poi_get_position(poi_h poi, location_coords_s *position)
 {
 	POI_NULL_ARG_CHECK(poi);
 	POI_NULL_ARG_CHECK(position);
@@ -630,7 +630,7 @@ int poi_get_position(poi_h poi, location_coords_s *position)
 	return POI_ERROR_NONE;
 }
 
-int poi_get_address(poi_h poi, char **building_number, char **postal_code, char **street, char **city, char **district, char **state, char **country_code)
+EXPORT_API int poi_get_address(poi_h poi, char **building_number, char **postal_code, char **street, char **city, char **district, char **state, char **country_code)
 {
 	POI_NULL_ARG_CHECK(poi);
 	const LocationAddress * addr = location_landmark_get_address((LocationLandmark*)poi);
@@ -661,7 +661,7 @@ int poi_get_address(poi_h poi, char **building_number, char **postal_code, char 
 
 }
 
-int poi_get_description(poi_h poi, char** description)
+EXPORT_API int poi_get_description(poi_h poi, char** description)
 {
 	POI_NULL_ARG_CHECK(poi);
 	POI_NULL_ARG_CHECK(description);
@@ -674,7 +674,7 @@ int poi_get_description(poi_h poi, char** description)
 	return POI_ERROR_NONE;
 }
 
-int poi_get_timestamp(poi_h poi , time_t *timestamp)
+EXPORT_API int poi_get_timestamp(poi_h poi , time_t *timestamp)
 {
 	POI_NULL_ARG_CHECK(poi);
 	POI_NULL_ARG_CHECK(timestamp);
@@ -682,7 +682,7 @@ int poi_get_timestamp(poi_h poi , time_t *timestamp)
 	return POI_ERROR_NONE;
 }
 
-int poi_get_bounding_rect(poi_h poi , location_coords_s *top_left, location_coords_s *bottom_right)
+EXPORT_API int poi_get_bounding_rect(poi_h poi , location_coords_s *top_left, location_coords_s *bottom_right)
 {
 	POI_NULL_ARG_CHECK(poi);
 	POI_NULL_ARG_CHECK(top_left);
@@ -699,7 +699,7 @@ int poi_get_bounding_rect(poi_h poi , location_coords_s *top_left, location_coor
 	return POI_ERROR_NONE;
 }
 
-int poi_get_author(poi_h poi , char** author)
+EXPORT_API int poi_get_author(poi_h poi , char** author)
 {
 	POI_NULL_ARG_CHECK(poi);
 	POI_NULL_ARG_CHECK(author);
@@ -711,7 +711,7 @@ int poi_get_author(poi_h poi , char** author)
 	return POI_ERROR_NONE;
 }
 
-int poi_get_phone_number(poi_h poi , char** phone_number)
+EXPORT_API int poi_get_phone_number(poi_h poi , char** phone_number)
 {
 	POI_NULL_ARG_CHECK(poi);
 	POI_NULL_ARG_CHECK(phone_number);
@@ -723,7 +723,7 @@ int poi_get_phone_number(poi_h poi , char** phone_number)
 	return POI_ERROR_NONE;
 }
 
-int poi_foreach_urls(poi_h poi, poi_urls_cb callback , void * user_data)
+EXPORT_API int poi_foreach_urls(poi_h poi, poi_urls_cb callback , void * user_data)
 {
 	POI_NULL_ARG_CHECK(poi);
 	POI_NULL_ARG_CHECK(callback);
@@ -739,7 +739,7 @@ int poi_foreach_urls(poi_h poi, poi_urls_cb callback , void * user_data)
 	return POI_ERROR_NONE;
 }
 
-int poi_foreach_properties(poi_h poi, poi_properties_cb callback, void * user_data)
+EXPORT_API int poi_foreach_properties(poi_h poi, poi_properties_cb callback, void * user_data)
 {
 	POI_NULL_ARG_CHECK(poi);
 	POI_NULL_ARG_CHECK(callback);
@@ -757,7 +757,7 @@ int poi_foreach_properties(poi_h poi, poi_properties_cb callback, void * user_da
 	return POI_ERROR_NONE;
 }
 
-int poi_foreach_categories(poi_h poi , poi_categories_cb callback , void * user_data)
+EXPORT_API int poi_foreach_categories(poi_h poi , poi_categories_cb callback , void * user_data)
 {
 	POI_NULL_ARG_CHECK(poi);
 	POI_NULL_ARG_CHECK(callback);
