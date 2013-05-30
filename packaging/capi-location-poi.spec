@@ -2,28 +2,25 @@ Name:       capi-location-poi
 Summary:    A Location POI library in Tizen Native API
 Version:    0.1.3
 Release:    1
-Group:      System/Libraries
-License:    Apache Licensc, Version 2.0
+Group:      Location/API
+License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
 BuildRequires:  cmake
 BuildRequires:  pkgconfig(dlog)
 BuildRequires:  pkgconfig(location)
 BuildRequires:  pkgconfig(capi-base-common)
 BuildRequires:  pkgconfig(capi-location-manager)
-Requires(post): /sbin/ldconfig  
-Requires(postun): /sbin/ldconfig
-
 %description
+A Location POI library in Tizen Native API.
 
 
 %package devel
 Summary:  A Location POI library in Tizen Native API (Development)
-Group:    TO_BE/FILLED_IN
+Group:    Location/Development
 Requires: %{name} = %{version}-%{release}
 
 %description devel
-
-
+%devel_desc
 
 %prep
 %setup -q
@@ -32,11 +29,9 @@ Requires: %{name} = %{version}-%{release}
 %build
 MAJORVER=`echo %{version} | awk 'BEGIN {FS="."}{print $1}'`
 %cmake . -DFULLVER=%{version} -DMAJORVER=${MAJORVER}
-
 make %{?jobs:-j%jobs}
 
 %install
-rm -rf %{buildroot}
 %make_install
 
 %post -p /sbin/ldconfig
@@ -45,6 +40,7 @@ rm -rf %{buildroot}
 
 
 %files
+%license LICENSE
 %manifest capi-location-poi.manifest
 %{_libdir}/libcapi-location-poi.so.*
 
